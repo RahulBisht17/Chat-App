@@ -1,12 +1,23 @@
 import React from 'react';
-import { Button, Divider, Drawer } from 'rsuite';
+import { Alert, Button, Divider, Drawer } from 'rsuite';
 import { useProfile } from '../../context/profile.context';
 import EditableInput from '../EditableInput';
+import { database } from '../../misc/firebase';
 
 const Dashboard = ({ onSignOut }) => {
   const { profile } = useProfile();
   const onSave = async newdata => {
-    console.log(newdata);
+    const userNickNameRef = database
+      .ref(`/profiles/${profile.uid}`)
+      .child('name');
+
+    try {
+      await userNickNameRef.set(newdata);
+
+      Alert.success('Nickname has been uodated', 4000);
+    } catch (err) {
+      Alert.error(err.message, 4000);
+    }
   };
 
   return (
